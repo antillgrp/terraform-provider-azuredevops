@@ -1,0 +1,67 @@
+{
+    "name": "tf-az-devops",
+    "runArgs": ["--name=tf-az-devops"],
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    // "hostRequirements": {
+    //   "cpus": 4,
+    //   "memory": "16gb",
+    //   "storage": "32gb"
+    // },
+    "features": {
+      "ghcr.io/devcontainers/features/azure-cli:1":{}, // Install Azure CLI
+      "ghcr.io/devcontainers/features/terraform:1": {}, // terraform
+      "ghcr.io/devcontainers/features/docker-in-docker:2":{} // install docker
+    },
+    //https://containers.dev/implementors/json_reference/#lifecycle-scripts
+    //https://containers.dev/implementors/json_reference/#formatting-string-vs-array-properties
+    //"waitFor": "postCreateCommand",
+    "postCreateCommand": "( echo '-----'; TZ='EST' date '+Container Creted On (LOG): %D | %I:%M%p EST'; T=$(az --version | grep azure-cli) && echo '✅'$T; T=$(terraform --version | grep Terraform) && echo '✅'$T; docker ps >/dev/null && T=$(docker --version) && echo '✅'$T )>>DEVCONTAINERS.log",
+    "postStartCommand" : "sed -i 's|removecolor}|removecolor}\\n|g' $HOME/.bashrc && source $HOME/.bashrc",
+    "customizations": {
+      "vscode": {
+        "settings": {
+          "workbench.colorTheme": "Default Dark+"
+        },
+	      // Configure properties specific to Codespaces.
+        "codespaces": {
+          "openFiles": [ 
+            "README.md",
+            "DEVCONTAINERS.log" 
+          ]
+        },
+        "extensions": [ 
+          // Public extensions in the gallery
+          "HashiCorp.terraform",  
+          "ms-vscode.vscode-node-azure-pack",
+          "ms-azuretools.vscode-azureterraform",
+          "ms-azuretools.vscode-docker",
+          "azapi-vscode.azapi",
+          "adamiBs.terraform-live-graph",
+          "davidanson.vscode-markdownlint",
+          "dbaeumer.vscode-eslint",
+          "timonwong.shellcheck"
+          //"GitHub.copilot-chat",
+          //"esbenp.prettier-vscode"
+	        //"cweijan.vscode-office"
+          // Extension built inside of the dev container or in the workspace
+          //"${containerWorkspaceFolder}/.devcontainer/extensions/customtool/publish/tool.vsix",
+          // Extension referenced from the container's mount path
+          //"/workspace/myApp/extensions/customtool/publish/tool.vsix",
+          // Extension referenced from a folder in the container user's home folder
+          //"/home/vscode/extensions/tool.vsix
+        ]
+      }
+    },
+    // SECRETS: https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces#about-secrets-for-github-codespaces
+    "containerEnv": { 
+      "GITHUB_USER": "${localEnv:GITHUB_USER}",
+      "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+      "TF_TOKEN_app_terraform_io": "SJUblCygyqyZHA.atlasv1.ZFl5MPsfN2CUrflmTm09TH2ikUg1H1Lk7CPwuk9C4mBPQghPnPh7wK3lvqLKuPxjzuw" 
+    }
+    // "remoteEnv": { 
+    //   "TF_TOKEN_app_terraform_io": "SJUblCygyqyZHA.atlasv1.ZFl5MPsfN2CUrflmTm09TH2ikUg1H1Lk7CPwuk9C4mBPQghPnPh7wK3lvqLKuPxjzuw" 
+    // },
+    
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+}
